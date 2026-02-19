@@ -1,0 +1,59 @@
+<div class="sub-nav">
+    <div class="sub-nav-title">Probing: Variable X{{ selectedVariableId }}</div>
+    <div class="sub-nav-buttons">
+        <button (click)="goBack()">Return</button>
+    </div>
+</div>
+
+<div class="probing-controls">
+    <div class="selector-wrapper">
+        <p>Wybierz zmienną do analizy:</p>
+        <select [(ngModel)]="selectedVariableId" (change)="onVariableChange($event)">
+    <option *ngFor="let varName of availableVariables()" [value]="varName">
+        {{ varName }}
+    </option>
+</select>
+    </div>
+</div>
+
+<!-- <div class="comparison-summary" *ngIf="probingData()">
+    <div class="summary-box">
+        <strong>Wariant X=0:</strong> 
+        {{ probingData().neg.metrics.forced_count }} wymuszonych,
+        <span [class.conflict]="probingData().neg.metrics.is_conflict">
+            {{ probingData().neg.metrics.is_conflict ? 'KONFLIKT!' : 'Stabilny' }}
+        </span>
+    </div>
+    <div class="summary-box">
+        <strong>Wariant X=1:</strong> 
+        {{ probingData().pos.metrics.forced_count }} wymuszonych,
+        <span [class.conflict]="probingData().pos.metrics.is_conflict">
+            {{ probingData().pos.metrics.is_conflict ? 'KONFLIKT!' : 'Stabilny' }}
+        </span>
+    </div>
+</div> -->
+
+<div class="dual-visualization-container">
+    <div class="graph-wrapper">
+        <h3>Przypisanie: 0 (FALSE)</h3>
+        <button (click)="startStab0()" [disabled]="stabilizationInProgress0()">Start Stabilization</button>
+        <button (click)="stopStab0()" [disabled]="!stabilizationInProgress0()">Stop Stabilization</button>
+        <div id="viz-false"></div>
+    </div>
+
+    <div class="graph-wrapper">
+        <h3>Przypisanie: 1 (TRUE)</h3>
+        <button (click)="startStab1()" [disabled]="stabilizationInProgress1()">Start Stabilization</button>
+        <button (click)="stopStab1()" [disabled]="!stabilizationInProgress1()">Stop Stabilization</button>
+        <div id="viz-true"></div>
+    </div>
+</div>
+<p>Legenda: fioletowy - analizowa zmienna, niebieski - zmienna, która została ,,True", żółty - ,,False", zielony - klauzula spełniona, czerwony - konflikt
+    
+</p>
+<div *ngIf="loading()" class="loader">
+    <div class="loader-spinner"></div>
+    <div *ngIf="stabilizationInProgress0()" class="stabilization-message">
+        Stabilizing network...
+    </div>
+</div>

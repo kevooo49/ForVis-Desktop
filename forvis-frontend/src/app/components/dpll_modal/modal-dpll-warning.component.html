@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <h5 class="modal-title text-danger">
+    Uwaga – DPLL Solver
+  </h5>
+</div>
+
+<div class="modal-body">
+  <p>
+    Uruchomienie wizualizacji <strong>DPLL Solver</strong> wiąże się z
+    procesem obliczeniowym, którego <strong>nie można przerwać manualnie</strong>.
+  </p>
+  <p>
+    Prosimy o cierpliwość – system musi zakończyć obliczenia, aby wygenerować wynik.
+  </p>
+  <p class="fw-bold">
+    Czy kontynuować?
+  </p>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-secondary"
+          (click)="activeModal.dismiss()">
+    Anuluj
+  </button>
+
+  <button class="btn btn-danger"
+          (click)="activeModal.close(true)">
+    Kontynuuj
+  </button>
+</div>

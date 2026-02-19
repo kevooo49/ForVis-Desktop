@@ -1,0 +1,92 @@
+<div class="d-flex align-items-center p-3" *ngIf="isLoading">
+  <strong>Loading...</strong>
+  <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+</div>
+
+<div id="visualizations" class="container-fluid p-2" *ngIf="!isLoading">
+  <table class="table">
+    <thead class="thead-dark">
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Status</th>
+      <th scope="col">File name</th>
+      <th scope="col">Visualization type</th>
+      <th scope="col">Visualization</th>
+      <th scope="col">Communities</th>
+      <th scope="col">Action / Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let vis of visualizations">
+      <td>{{ vis.id }}</td>
+      
+      <td class="text-uppercase">
+          <b *ngIf="isPausing(vis)" class="text-warning">
+              Pausing...
+          </b>
+          
+          <b *ngIf="isResuming(vis)" class="text-primary">
+              Resuming...
+          </b>
+          
+          <b *ngIf="!isPausing(vis) && !isResuming(vis)" 
+             [ngClass]="{'text-warning': vis.status === 'paused', 'text-success': vis.status === 'done', 'text-primary': vis.status === 'pending'}">
+              {{ vis.status }}
+          </b>
+      </td>
+      
+      <td>{{ vis.name }}</td>
+      <td>{{ getFormat(vis.json_format) }}</td>
+      
+      <td>
+          <button *ngIf="isDone(vis)" (click)="visualize(vis)" class="btn btn-info btn-sm">Show</button>
+          
+          <div *ngIf="!isDone(vis)" class="btn-group" role="group">
+              
+              <button *ngIf="vis.status !== 'paused' && !isPausing(vis)" 
+                      (click)="pauseVisualization(vis)" 
+                      class="btn btn-warning btn-sm" 
+                      title="Pause calculation">
+                  ⏸ Pause
+              </button>
+
+              <button *ngIf="isPausing(vis)" 
+                      disabled 
+                      class="btn btn-warning btn-sm">
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  Pausing...
+              </button>
+
+
+              <button *ngIf="vis.status === 'paused' && !isResuming(vis)" 
+                      (click)="resumeVisualization(vis)" 
+                      class="btn btn-success btn-sm" 
+                      title="Resume calculation">
+                  ▶ Resume
+              </button>
+              
+              <button *ngIf="isResuming(vis)" 
+                      disabled 
+                      class="btn btn-success btn-sm">
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  Resuming...
+              </button>
+
+              <button (click)="checkProgress(vis)" class="btn btn-secondary btn-sm">Progress</button>
+          </div>
+      </td>
+
+      <td>
+        <div *ngIf="isDone(vis)">
+             <button *ngIf="canCreateCommunity(vis)" (click)="visualizeCommunity(vis)" class="btn btn-info btn-sm">Communities</button>
+             <span *ngIf="!canCreateCommunity(vis)" class="text-muted small">N/A</span>
+        </div>
+      </td>
+      
+      <td>
+        <button (click)="deleteVisualization(vis.id)" class="btn btn-danger btn-sm">Delete</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,47 @@
+<div class="sub-nav">
+    <div class="sub-nav-title">CDCL Solver Visualization ({{ fileName() }})</div>
+    
+    
+    <div class="sub-nav-content">
+        <form #cdclGraphForm="ngForm" class="heuristic-form">
+            <div class="form-group">
+                <p>Choose heuristic:</p>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="varType" [(ngModel)]="heuristicType" [value]="1" required>VSIDS
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="varType" [(ngModel)]="heuristicType" [value]="2" required>DLIS
+                    </label>
+                </div>
+            </div>
+            <button type="button" class="btn-draw" [disabled]="!cdclGraphForm.form.valid" (click)="loadHeuristic()">
+                Draw
+            </button>
+        </form>
+        <div class="sub-nav-buttons">
+            <button (click)="startStab()" [disabled]="stabilizationInProgress()">Start Stabilization</button>
+            <button (click)="stopStab()" [disabled]="!stabilizationInProgress()">Stop Stabilization</button>
+            <button (click)="downloadPng()">Download as PNG</button>
+            <button (click)="downloadPdf()">Download as PDF</button>
+            <button (click)="goBack()">Return</button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="info()" class="info-message">
+    {{ info() }}
+</div>
+
+<div id="visualization"></div>
+
+<div *ngIf="loading()" class="loader">
+    <div class="loader-spinner"></div>
+    <div *ngIf="stabilizationInProgress()" class="stabilization-message">
+        Stabilizing network...
+    </div>
+</div>
+<div class="extra_vis">
+    <p>Wizualizacja trudności semantycznej zmiennych</p>
+    <div id="visualization_plus"></div>
+</div>
