@@ -1,204 +1,89 @@
-# ForVis – Instrukcja deweloperska
-Poniżej znajduje się instrukcja krok po kroku, jak uruchomić projekt w środowisku lokalnym.
+# 🛰️ ForVis Desktop (v1.0)
 
-1. **Wymagania wstępne**
-Python: wersja 3.6.8
+**Advanced Logic Formula Visualization & Analysis Tool**
 
-Node.js & npm
-
-Środowisko wirtualne: venv
-
-2. **Konfiguracja i uruchomienie**
-# Krok 1: Backend (Python & Celery)
-Upewnij się, że masz zainstalowane biblioteki z pliku requirements.txt wewnątrz swojego środowiska wirtualnego.
-
-Otwórz terminal i aktywuj venv.
-
-Uruchom skrypty startowe (na Windows użyj terminala typu Git Bash):
-
-Bash
-./run_desktop.sh
-./run_celery_desktop.sh
-
-# Krok 2: Redis
-Projekt wymaga serwera Redis działającego na porcie 6379. Przejdź do folderu redis i wykonaj:
-
-Linux/macOS/Git Bash:
-
-Bash
-redis-server --port 6379
-Windows (CMD/PowerShell):
-
-Bash
-./redis-server.exe --port 6379
-
-# Krok 3: Frontend (Angular)
-Przejdź do katalogu forvis-frontend, zainstaluj zależności i uruchom frontend:
-
-npm install   # Wykonaj tylko przy pierwszym uruchomieniu
-npm start
-
-3. **Podgląd projektu**
-Po poprawnym uruchomieniu wszystkich komponentów, aplikacja powinna być dostępna pod adresem:
-http://localhost:4200
-
-
-# Jak stworzyć instalator? 
-
-1. W katalogu głównym (na venv):
-pyinstaller --clean --console backend.spec
-
-2. Tworzy się wtedy nowy folder dist/backend w katalogu głównym. Folder backend skopiuj w całości do folderu forvis-frontend. 
-
-3. Przejdź do folderu forvis-frontend:
-npm run build:desktop
-
-4. Następnie:
-npm run dist
-
-i w folderze release stworzy się plik .exe
-
-
-Stare readme (do wersji mobilnej uruchamianej przez dockera)
-
-# ForVis
-
-# Wymagania wstępne:
-
-1. **Zainstalowany Docker oraz Docker Compose**
-   - Instrukcja instalacji Docker na Ubuntu 16.04: 
-     [DigitalOcean Tutorial](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
-   - Instalacja Docker Compose:
-     ```bash
-     sudo apt install docker-compose
-     ```
-   - Instalacja Node.js i npm:
-     ```bash
-     sudo apt install nodejs
-     sudo apt install npm
-     ```
-
-2. **Wyłączenie serwera Apache, jeśli działa:**
-   ```bash
-   sudo pkill apache
-   ```
+**ForVis Desktop** to zintegrowane narzędzie offline do wizualizacji i analizy złożonych formuł logicznych (**SAT** oraz **MaxSAT**). System pozwala „zobaczyć” matematyczną strukturę problemów NP-trudnych, pomagając badaczom i studentom zrozumieć, jak działają współczesne solvery.
 
 ---
 
-# Instrukcja uruchomienia systemu:
+## 🚀 Kluczowe Funkcje
 
-1. **Budowanie plików frontendowych:**
-   Z katalogu `frontend/formulavis` wykonaj:
-   ```bash
-   npm install
-   npm run build
-   ```
+**Analiza 360°:** 11 różnych metod wizualizacji – od klasycznych grafów interakcji po mapy ciepła i struktury hierarchiczne.
 
-2. **Uruchomienie systemu z folderu z plikiem `docker-compose.yml`:**
-   - Standardowe uruchomienie:
-     ```bash
-     docker-compose up
-     ```
-   - Jeśli wymagane są uprawnienia administratora:
-     ```bash
-     sudo docker-compose up
-     ```
 
-3. **Uniknięcie błędów z plikami:**
-   Wykonaj poniższą komendę:
-   ```bash
-   sudo chmod 777 _files
-   ```
+**SAT Landscape:** Unikalne rzutowanie wysokowymiarowej przestrzeni stanów na mapę 2D (PCA), pozwalające śledzić trajektorię solvera.
+
+
+**Analiza What-If:** Interaktywna symulacja decyzji logicznych w trybie Side-by-Side bez modyfikowania bazowej formuły.
+
+
+**Semantic Scoring:** Automatyczna identyfikacja „krytycznych” zmiennych, które generują najwięcej konfliktów w algorytmach.
+
+
+**Pełna Kontrola:** Autorski mechanizm **Stop/Resume**, pozwalający pauzować ciężkie obliczenia bez zamrażania interfejsu.
+
+
 
 ---
 
-# Rozwiązywanie problemów:
+## 🛠️ Architektura („Pod maską”)
 
-### 1. **Błąd "Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock":**
-   Ustaw odpowiednie uprawnienia:
-   ```bash
-   sudo chmod 666 /var/run/docker.sock
-   ```
+Projekt łączy technologie webowe z wydajnością aplikacji natywnej poprzez model **Embedded Desktop**:
 
-### 2. **Błąd związany z działającymi serwisami (np. nginx, postgres):**
-   Wyłącz działające serwisy:
-   ```bash
-   sudo service nginx stop
-   sudo service postgres stop
-   ```
-
-### 3. **Błąd "version in ... unsupported":**
-   W pliku `docker-compose.yml` zmień wersję z `3` na `2`.
-
-### 4. **Błąd związany z usługą nginx lub frontendem:**
-   Postępuj zgodnie z poniższymi krokami:
-   1. Zatrzymaj system:
-      ```bash
-      CTRL + C lub docker-compose stop
-      ```
-
-   2. W sekcji `frontend` pliku `docker-compose.yml` dodaj opcję:
-      ```yml
-      command: npm install --no-optional
-      ```
-
-   3. Uruchom system ponownie:
-      ```bash
-      docker-compose up
-      ```
-
-   4. Po ponownym wystąpieniu błędu frontend, zatrzymaj system:
-      ```bash
-      docker-compose stop
-      ```
-
-   5. Usuń wcześniej dodaną opcję w sekcji `frontend` w pliku `docker-compose.yml`.
-
-   6. Uruchom system ponownie:
-      ```bash
-      docker-compose up
-      ```
+| Warstwa | Technologia | Rola |
+| --- | --- | --- |
+| **Frontend** | Angular + Electron | Interaktywny interfejs i renderowanie grafów (D3.js, Vis-network).|
+| **Backend** | Django (Embedded) | Logika biznesowa, parsowanie plików DIMACS i REST API (127.0.0.1).|
+| **Obliczenia** | Celery + Redis | Asynchroniczne przetwarzanie zadań w tle w trybie *Solo Pool*.|
+| **Baza danych** | SQLite | Lokalny magazyn metadanych i statusów zadań.|
 
 ---
 
-# Dane administratora:
+## 📉 Przykładowe Wizualizacje
 
-- Login: `admin`
-- Hasło: `admin`
+System obsługuje m.in.:
+
+1. **Interaction Graph:** Sieć powiązań między literałami.
+
+
+2. **CDCL Solver Vis:** Dynamiczne drzewo decyzji pokazujące powstawanie klauzul uczących.
+
+
+3. **Heatmap:** Intensywność relacji w formule.
+
+
+4. **Factor Graph:** Rozszerzona reprezentacja uwzględniająca klauzule jako węzły.
+
+
 
 ---
 
-# Dostęp do systemu:
+## 💻 Instalacja i Uruchomienie
 
-1. **Strona główna projektu:**
-   Wpisz w przeglądarce:
-   ```txt
-   localhost
-   ```
+Aplikacja realizuje paradygmat **„Click & Run”** – nie wymaga instalacji Pythona, Node.js ani bazy danych.
 
-2. **Panel administratora:**
-   Wpisz w przeglądarce:
-   ```txt
-   localhost:8000/admin/
-   ```
+1. Pobierz najnowszą wersję `ForVis_Setup.exe`.
+
+
+2. Uruchom plik – system automatycznie powoła do życia lokalny serwer i silnik obliczeniowy.
+
+
+3. Wgraj plik `.cnf` (DIMACS) i zacznij eksplorację.
+
+
 
 ---
 
-# **DEVELOPMENT**
+## 🎓 Autorzy i Projekt
 
-   first terminal window:
-   ```bash
-   cd forvis-frontend
-   ng serve --host 0.0.0.0 --port 4200
-   ```
+Projekt został zrealizowany na **Wydziale Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej (EAIiIB) AGH**.
 
-   second terminal window:
-   ```bash
-   docker-compose -f docker-compose.dev.yml up --build
-   ```
+**Autorzy:** Kevin Stuka, Kalina Rączka 
+**Opiekun:** dr hab. inż. Radosław Klimek 
 
 
 
-**Uwagi dodatkowe:**
-- System może wymagać kilku sekund na pełne uruchomienie.
-- Powyższe instrukcje są zoptymalizowane dla Ubuntu 16.04, ale mogą działać również na nowszych wersjach systemu.
+---
+
+**Chcesz dowiedzieć się więcej o matematyce stojącej za projektem?**
+Zapoznaj się z [Pełną Dokumentacją Techniczną](https://github.com/kevooo49/ForVis-Desktop/blob/main/ForVisDesktopFinal.pdf) (Rozdział 2: Kontekst Teoretyczny).
